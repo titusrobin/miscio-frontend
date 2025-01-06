@@ -1,5 +1,5 @@
 // src/app/services/api.ts
-import { Message, LoginResponse, ChatResponse } from '@/types/api';
+import { Message, LoginResponse, ChatResponse, Thread } from '@/types/api';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
@@ -90,8 +90,32 @@ class ApiService {
   async getChatHistory(thread_id: string): Promise<Message[]> {
     return this.request<Message[]>(`/chat/history/${thread_id}`, {
       method: 'GET',
+    }); 
+  }
+  async createThread(): Promise<Thread> {
+    return this.request<Thread>('/chat/threads', {
+      method: 'POST'
     });
   }
+
+  async getThreads(): Promise<Thread[]> {
+    return this.request<Thread[]>('/chat/threads', {
+      method: 'GET'
+    });
+  }
+
+  async getThreadMessages(threadId: string): Promise<Message[]> {
+    return this.request<Message[]>(`/chat/threads/${threadId}/messages`, {
+      method: 'GET'
+    });
+  }
+
+  async sendThreadMessage(threadId: string, content: string): Promise<ChatResponse> {
+    return this.request<ChatResponse>(`/chat/threads/${threadId}/messages`, {
+        method: 'POST',
+        body: JSON.stringify({ content })
+    });
+    }
 }
 
 export const api = new ApiService();
