@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Send, Plus, FileUp } from 'lucide-react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { api } from '@/app/services/api';
 import { Message, Thread } from '@/types/api';
 
@@ -17,7 +16,6 @@ export default function DashboardPage() {
   const [activeThread, setActiveThread] = useState<string | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -116,10 +114,6 @@ export default function DashboardPage() {
     console.log('File upload clicked');
   };
 
-  // Rest of your JSX remains the same, just update the thread object properties:
-  // thread.lastMessage -> thread.last_message
-  // thread.timestamp -> thread.last_activity
-  
   return (
     <div className="flex h-screen bg-white">
       <div className="w-64 bg-gray-100 flex flex-col border-r border-gray-200">
