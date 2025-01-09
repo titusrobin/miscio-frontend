@@ -16,8 +16,8 @@ export interface Message {
   export interface ChatResponse {
     response: string;
   }
-
-export interface Thread {
+  
+  export interface Thread {
     id: string;
     title: string;
     created_at: string;
@@ -29,4 +29,18 @@ export interface Thread {
     thread_id: string;
     messages: Message[];
     assistant_id: string;
+  }
+  
+  export interface User {
+    id: string;
+    username: string;
+    email: string;
+    is_active: boolean;
+    created_at: string;
+    assistant_id?: string;
+    thread_id?: string;
+  }
+  
+  export interface ProtectedResponse {
+    message: string;
   }

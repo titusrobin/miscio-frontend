@@ -1,8 +1,7 @@
 // src/app/services/api.ts
-import { Message, LoginResponse, ChatResponse, Thread } from '@/types/api';
+import { Message, LoginResponse, ChatResponse, Thread, User, ProtectedResponse } from '@/types/api';
 import env from '@/config/env';
 
-// Use environment configuration
 const API_BASE_URL = `${env.API_URL}/api/v1`;
 
 export interface ApiResponse<T> {
@@ -12,7 +11,6 @@ export interface ApiResponse<T> {
 
 class ApiService {
   private getHeaders(contentType: string = 'application/json'): HeadersInit {
-    // Add check for browser environment
     let token = '';
     if (typeof window !== 'undefined') {
       token = localStorage.getItem('token') || '';
@@ -29,7 +27,6 @@ class ApiService {
 
   private async request<T>(endpoint: string, options: RequestInit): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
-    // Add environment to logging
     console.log(`[${env.ENVIRONMENT}] Requesting: ${url}`);
     const headers = this.getHeaders((options.headers as Record<string, string>)?.['Content-Type']);
     
@@ -41,7 +38,6 @@ class ApiService {
       
       if (!response.ok) {
         if (response.status === 401) {
-          // Add check for browser environment
           if (typeof window !== 'undefined') {
             localStorage.removeItem('token');
             window.location.href = '/';
@@ -58,7 +54,6 @@ class ApiService {
     }
   }
 
-  // Your existing methods remain unchanged as they're working well
   async login(username: string, password: string): Promise<LoginResponse> {
     const formData = new URLSearchParams();
     formData.append('username', username);
@@ -87,14 +82,14 @@ class ApiService {
     });
   }
 
-  async getCurrentUser(): Promise<any> {
-    return this.request<any>('/auth/me', {
+  async getCurrentUser(): Promise<User> {
+    return this.request<User>('/auth/me', {
       method: 'GET',
     });
   }
 
-  async getProtectedEndpoint(): Promise<any> {
-    return this.request<any>('/auth/protected-endpoint', {
+  async getProtectedEndpoint(): Promise<ProtectedResponse> {
+    return this.request<ProtectedResponse>('/auth/protected-endpoint', {
       method: 'GET',
     });
   }
