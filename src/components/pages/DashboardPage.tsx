@@ -23,21 +23,7 @@ export default function DashboardPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, scrollToBottom]);
-
-  useEffect(() => {
-    loadThreads();
-  }, []);
-
-  useEffect(() => {
-    if (activeThread) {
-      loadThreadMessages(activeThread);
-    }
-  }, [activeThread]);
-
-  const loadThreads = async () => {
+  const loadThreads = useCallback(async () => {
     try {
       const fetchedThreads = await api.getThreads();
       setThreads(fetchedThreads);
@@ -48,7 +34,21 @@ export default function DashboardPage() {
       console.error('Error loading threads:', error);
       setError('Failed to load threads');
     }
-  };
+  }, [activeThread]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
+  useEffect(() => {
+    loadThreads();
+  }, [loadThreads]);
+
+  useEffect(() => {
+    if (activeThread) {
+      loadThreadMessages(activeThread);
+    }
+  }, [activeThread]);
 
   const loadThreadMessages = async (threadId: string) => {
     setIsLoadingHistory(true);
