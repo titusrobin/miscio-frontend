@@ -1,9 +1,10 @@
+// src/components/pages/LoginPage.tsx
+
 'use client';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
-
-
+import { api } from '@/app/services/api';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,31 +23,19 @@ export default function LoginPage() {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          username: formData.username,
-          password: formData.password,
-        }),
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('token', data.access_token);
-        window.location.href = '/dashboard';
-      } else {
-        const errorData = await response.json();
-        setError(errorData.detail || 'Login failed');
-      }
+      const data = await api.login(formData.username, formData.password);
+      localStorage.setItem('token', data.access_token);
+      // Also store assistant and thread IDs if needed
+      localStorage.setItem('assistant_id', data.assistant_id);
+      localStorage.setItem('thread_id', data.thread_id);
+      window.location.href = '/dashboard';
     } catch (error) {
-      setError('Network error occurred');
+      setError(error instanceof Error ? error.message : 'Login failed');
     } finally {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

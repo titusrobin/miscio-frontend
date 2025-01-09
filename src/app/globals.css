@@ -19,3 +19,8 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Ensure all text inputs have black text */
+input, textarea, select {
+  color: #000000;
+}

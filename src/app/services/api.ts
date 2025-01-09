@@ -1,7 +1,9 @@
 // src/app/services/api.ts
 import { Message, LoginResponse, ChatResponse, Thread } from '@/types/api';
+import env from '@/config/env';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+
+const API_BASE_URL = `${env.API_URL}/api/v1`;
 
 export interface ApiResponse<T> {
   data: T;
