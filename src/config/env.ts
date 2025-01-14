@@ -4,7 +4,7 @@ interface EnvConfig {
   }
   
   const env: EnvConfig = {
-    API_URL: typeof window !== 'undefined' ? '/api' : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api',
+    API_URL: typeof window !== 'undefined' ? '' : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
     ENVIRONMENT: process.env.NEXT_PUBLIC_ENVIRONMENT || 'development',
   };
   
