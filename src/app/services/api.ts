@@ -55,18 +55,30 @@ class ApiService {
   }
 
   async login(username: string, password: string): Promise<LoginResponse> {
-    const formData = new URLSearchParams();
-    formData.append('username', username);
-    formData.append('password', password);
+    try {
+        const response = await fetch(`${env.API_URL}/api/v1/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                username,
+                password,
+            }),
+        });
 
-    return this.request<LoginResponse>('/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData,
-    });
-  }
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Login error:', error);
+        throw error;
+    }
+}
 
   async register(username: string, password: string): Promise<LoginResponse> {
     const formData = new URLSearchParams();

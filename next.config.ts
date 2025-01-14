@@ -1,3 +1,4 @@
+// next.config.ts
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -5,7 +6,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/api/v1/:path*',
-        destination: 'http://18.209.157.162:8000/api/v1/:path*', // For local development
+        destination: process.env.NEXT_PUBLIC_API_URL + '/api/v1/:path*',
       },
     ];
   },
