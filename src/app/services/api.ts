@@ -2,7 +2,7 @@
 import { Message, LoginResponse, ChatResponse, Thread, User, ProtectedResponse } from '@/types/api';
 import env from '@/config/env';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api/v1';
+const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL || ''}/api/v1`;
 
 export interface ApiResponse<T> {
   data: T;
@@ -55,30 +55,19 @@ class ApiService {
   }
 
   async login(username: string, password: string): Promise<LoginResponse> {
-    try {
-        const response = await fetch(`${env.API_URL}/api/v1/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                username,
-                password,
-            }),
-        });
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('password', password);
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
-        }
+    return this.request<LoginResponse>('/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: formData,
+    });
+  }
 
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Login error:', error);
-        throw error;
-    }
-}
 
   async register(username: string, password: string): Promise<LoginResponse> {
     const formData = new URLSearchParams();
