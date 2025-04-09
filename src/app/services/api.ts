@@ -126,8 +126,9 @@ class ApiService {
     });
   }
 
-  async sendThreadMessage(threadId: string, content: string): Promise<ChatResponse> {
-    return this.request<ChatResponse>(`/chat/threads/${threadId}/messages`, {
+  // Updated to support the backend response which includes messages array
+  async sendThreadMessage(threadId: string, content: string): Promise<{response?: string, messages?: Message[]}> {
+    return this.request<{response?: string, messages?: Message[]}>(`/chat/threads/${threadId}/messages`, {
       method: 'POST',
       body: JSON.stringify({ content })
     });
