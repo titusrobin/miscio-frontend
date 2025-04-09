@@ -2,7 +2,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import DashboardPage from '@/components/pages/DashboardPage';  // Fix the import path
+import DashboardPage from '@/components/pages/DashboardPage';
 
 export default function Dashboard() {
   const router = useRouter();

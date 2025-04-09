@@ -1,5 +1,5 @@
 // src/app/services/api.ts
-import { Message, LoginResponse, ChatResponse, Thread, User, ProtectedResponse } from '@/types/api';
+import { Message, LoginResponse, ChatResponse, Thread, User, ProtectedResponse, ThreadMessageResponse } from '@/types/api';
 import env from '@/config/env';
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL || ''}/api/v1`;
@@ -126,9 +126,9 @@ class ApiService {
     });
   }
 
-  // Updated to support the backend response which includes messages array
-  async sendThreadMessage(threadId: string, content: string): Promise<{response?: string, messages?: Message[]}> {
-    return this.request<{response?: string, messages?: Message[]}>(`/chat/threads/${threadId}/messages`, {
+  // Updated to use the explicit ThreadMessageResponse type
+  async sendThreadMessage(threadId: string, content: string): Promise<ThreadMessageResponse> {
+    return this.request<ThreadMessageResponse>(`/chat/threads/${threadId}/messages`, {
       method: 'POST',
       body: JSON.stringify({ content })
     });

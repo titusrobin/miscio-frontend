@@ -18,6 +18,12 @@ export interface ChatResponse {
   messages?: Message[]; // Adding support for messages array response
 }
 
+// Define a separate type for thread message response to be more explicit
+export interface ThreadMessageResponse {
+  response?: string;
+  messages?: Message[];
+}
+
 export interface Thread {
   id: string;
   title: string;
