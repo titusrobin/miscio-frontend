@@ -133,6 +133,23 @@ class ApiService {
       body: JSON.stringify({ content })
     });
   }
+  
+  async uploadFile(file: File, vectorStoreName?: string): Promise<any> {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (vectorStoreName) {
+      formData.append('vector_store_name', vectorStoreName);
+    }
+  
+    return this.request<any>('/rag/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        // Override the content type in the getHeaders method
+      },
+      body: formData,
+    });
+  }
 }
 
 export const api = new ApiService();

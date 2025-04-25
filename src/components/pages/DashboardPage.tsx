@@ -16,6 +16,12 @@ export default function DashboardPage() {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [activeThread, setActiveThread] = useState<string | null>(null);
   
+  // Add new state for file upload
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
+  
+  // Create a ref for the hidden file input
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -131,8 +137,46 @@ export default function DashboardPage() {
     }
   };
 
+  // Add a function to handle file selection
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    const file = files[0];
+    setIsUploading(true);
+    setError(null);
+    setUploadSuccess(null);
+    
+    try {
+      // Optional: You could add a dialog here to ask for vector_store_name
+      const vectorStoreName = `${activeThread}-knowledge-base`; // Default name based on thread
+      
+      const response = await api.uploadFile(file, vectorStoreName);
+      setUploadSuccess(`File ${file.name} uploaded successfully!`);
+      
+      // Add a system message about the successful upload
+      const systemMessage: Message = {
+        role: 'assistant',
+        content: `File ${file.name} has been uploaded successfully. You can now ask questions about its content.`,
+        timestamp: new Date().toISOString()
+      };
+      
+      setMessages(prev => [...prev, systemMessage]);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setError('Failed to upload file. Please try again.');
+    } finally {
+      setIsUploading(false);
+      // Clear the file input so the same file can be uploaded again if needed
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  // Update the handleFileUpload function to trigger the file input click
   const handleFileUpload = () => {
-    console.log('File upload clicked');
+    fileInputRef.current?.click();
   };
 
   return (
@@ -233,6 +277,20 @@ export default function DashboardPage() {
               </div>
             ))
           )}
+          
+          {isUploading && (
+            <div className="flex justify-center items-center my-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <span className="ml-2">Uploading file...</span>
+            </div>
+          )}
+          
+          {uploadSuccess && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded text-center my-2">
+              {uploadSuccess}
+            </div>
+          )}
+          
           <div ref={messagesEndRef} />
           {isLoading && (
             <div className="flex justify-start items-center space-x-2">
@@ -245,24 +303,36 @@ export default function DashboardPage() {
 
         <div className="border-t border-gray-200 p-4">
           <form onSubmit={handleSendMessage} className="flex items-center space-x-4">
+            {/* Add the hidden file input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileSelect}
+              className="hidden"
+              accept=".txt,.pdf,.doc,.docx,.csv,.xlsx" // Specify accepted file types
+            />
+            
             <button
               type="button"
               onClick={handleFileUpload}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              className={`p-2 ${isUploading ? 'text-blue-400 animate-pulse' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
+              disabled={isUploading}
             >
               <FileUp className="h-5 w-5" />
             </button>
+            
             <input
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               placeholder="Type your message..."
               className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isLoading}
+              disabled={isLoading || isUploading}
             />
+            
             <button
               type="submit"
-              disabled={!inputMessage.trim() || isLoading}
+              disabled={!inputMessage.trim() || isLoading || isUploading}
               className="p-2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               <Send className="h-5 w-5" />
