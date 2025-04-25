@@ -1,5 +1,5 @@
 // src/app/services/api.ts
-import { Message, LoginResponse, ChatResponse, Thread, User, ProtectedResponse, ThreadMessageResponse } from '@/types/api';
+import { Message, LoginResponse, ChatResponse, Thread, User, ProtectedResponse, ThreadMessageResponse, FileUploadResponse } from '@/types/api';
 import env from '@/config/env';
 
 const API_BASE_URL = `${process.env.NEXT_PUBLIC_API_URL || ''}/api/v1`;
@@ -134,14 +134,14 @@ class ApiService {
     });
   }
   
-  async uploadFile(file: File, vectorStoreName?: string): Promise<any> {
+  async uploadFile(file: File, vectorStoreName?: string): Promise<FileUploadResponse> {
     const formData = new FormData();
     formData.append('file', file);
     if (vectorStoreName) {
       formData.append('vector_store_name', vectorStoreName);
     }
   
-    return this.request<any>('/rag/upload', {
+    return this.request<FileUploadResponse>('/rag/upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'multipart/form-data',

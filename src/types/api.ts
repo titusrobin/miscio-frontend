@@ -51,3 +51,11 @@ export interface User {
 export interface ProtectedResponse {
   message: string;
 }
+
+// Add this to your existing types
+export interface FileUploadResponse {
+  success: boolean;
+  filename: string;
+  message: string;
+  vector_store_name?: string;
+}

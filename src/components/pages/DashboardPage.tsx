@@ -151,7 +151,7 @@ export default function DashboardPage() {
       // Optional: You could add a dialog here to ask for vector_store_name
       const vectorStoreName = `${activeThread}-knowledge-base`; // Default name based on thread
       
-      const response = await api.uploadFile(file, vectorStoreName);
+      const _response = await api.uploadFile(file, vectorStoreName);
       setUploadSuccess(`File ${file.name} uploaded successfully!`);
       
       // Add a system message about the successful upload
