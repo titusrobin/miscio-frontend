@@ -144,8 +144,6 @@ class ApiService {
     return this.request<FileUploadResponse>('/rag/upload', {
       method: 'POST',
       headers: {
-        'Content-Type': 'multipart/form-data',
-        // Override the content type in the getHeaders method
       },
       body: formData,
     });
