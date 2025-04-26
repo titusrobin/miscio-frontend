@@ -153,6 +153,10 @@ export default function DashboardPage() {
       
       await api.uploadFile(file, vectorStoreName);
       setUploadSuccess(`File ${file.name} uploaded successfully!`);
+
+      setTimeout(() => {
+        setUploadSuccess(null);
+      }, 2500); // 5000ms = 5 seconds
       
       // Add a system message about the successful upload
       const systemMessage: Message = {
