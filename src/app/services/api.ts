@@ -134,19 +134,56 @@ class ApiService {
     });
   }
   
+  private async requestWithFormData<T>(endpoint: string, formData: FormData): Promise<T> {
+    const url = `${API_BASE_URL}${endpoint}`;
+    console.log(`[${env.ENVIRONMENT}] Requesting: ${url} with FormData`);
+    
+    // Get token for authorization
+    let token = '';
+    if (typeof window !== 'undefined') {
+      token = localStorage.getItem('token') || '';
+    }
+    
+    // Only set the Authorization header
+    const headers: HeadersInit = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        if (response.status === 401) {
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('token');
+            window.location.href = '/';
+          }
+          throw new Error('Session expired');
+        }
+        const error = await response.json();
+        throw new Error(error.detail || 'An error occurred');
+      }
+      return response.json();
+    } catch (error) {
+      console.error(`[${env.ENVIRONMENT}] API Error:`, error);
+      throw error;
+    }
+  }
+  
+  // Then, update your uploadFile method to use it
   async uploadFile(file: File, vectorStoreName?: string): Promise<FileUploadResponse> {
     const formData = new FormData();
     formData.append('file', file);
     if (vectorStoreName) {
       formData.append('vector_store_name', vectorStoreName);
     }
-  
-    return this.request<FileUploadResponse>('/rag/upload', {
-      method: 'POST',
-      headers: {
-      },
-      body: formData,
-    });
+    
+    return this.requestWithFormData<FileUploadResponse>('/rag/upload', formData);
   }
 }
 
