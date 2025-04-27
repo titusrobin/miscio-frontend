@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Send, Plus, FileUp } from 'lucide-react';
+import { ArrowUp, Plus, FileUp } from 'lucide-react';
 import Image from 'next/image';
 import { api } from '@/app/services/api';
 import { Message, Thread } from '@/types/api';
@@ -343,9 +343,9 @@ export default function DashboardPage() {
             <button
               type="submit"
               disabled={!inputMessage.trim() || isLoading || isUploading}
-              className="p-2 text-blue-600 hover:text-blue-800 disabled:text-gray-400 disabled:cursor-not-allowed"
+              className="w-8 h-8 flex items-center justify-center bg-blue-500 hover:bg-blue-600 rounded-md text-white transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              <Send className="h-5 w-5" />
+              <ArrowUp className="h-5 w-5" />
             </button>
           </form>
         </div>
