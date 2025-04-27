@@ -265,7 +265,8 @@ export default function DashboardPage() {
                 {thread.last_message}
               </div>
               <div className="text-xs text-gray-400 mt-1">
-                {new Date(thread.last_activity).toLocaleString([], {
+                {new Date(thread.last_activity).toLocaleString('en-US', {
+                  timeZone: 'America/New_York',
                   month: 'numeric',
                   day: 'numeric',
                   hour: '2-digit',
