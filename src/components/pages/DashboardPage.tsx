@@ -254,9 +254,9 @@ export default function DashboardPage() {
                     <Image
                       src="/images/misai.svg"
                       alt="Assistant"
-                      width={42}
-                      height={42}
-                      className="rounded-full w-9 h-9"
+                      width={52}
+                      height={52}
+                      className="rounded-full w-10 h-10"
                     />
                   </div>
                 )}
