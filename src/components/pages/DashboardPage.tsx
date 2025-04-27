@@ -191,7 +191,7 @@ export default function DashboardPage() {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <Image
-              src="/images/mai.svg"
+              src="/images/misciologo2.png"
               alt="Logo"
               width={102}
               height={72}
@@ -252,7 +252,7 @@ export default function DashboardPage() {
                 {message.role === 'assistant' && (
                   <div className="flex-shrink-0">
                     <Image
-                      src="/images/mai.svg"
+                      src="/images/misai.svg"
                       alt="Assistant"
                       width={32}
                       height={32}
@@ -261,22 +261,22 @@ export default function DashboardPage() {
                   </div>
                 )}
                 <div
-                  className={`max-w-[70%] px-4 py-2 rounded-lg ${
-                    message.role === 'user'
-                      ? 'bg-blue-100 text-gray-800'
-                      : 'bg-gray-100 text-gray-800'
-                  }`}
-                >
-                  {message.role === 'assistant' ? (
-                    <FormattedMessage content={message.content} />
-                  ) : (
-                    message.content
-                  )}
-                </div>
+                className={`max-w-[70%] px-4 py-2 rounded-lg ${
+                  message.role === 'user'
+                    ? 'bg-blue-100 text-gray-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
+              >
+                {message.role === 'assistant' ? (
+                  <FormattedMessage content={message.content} />
+                ) : (
+                  message.content
+                )}
+              </div>
                 {message.role === 'user' && (
                   <div className="flex-shrink-0">
                     <Image
-                      src="/images/user.svg"
+                      src="/images/muser.svg"
                       alt="User"
                       width={32}
                       height={32}
