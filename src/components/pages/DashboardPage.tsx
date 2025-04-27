@@ -6,6 +6,8 @@ import { Send, Plus, FileUp } from 'lucide-react';
 import Image from 'next/image';
 import { api } from '@/app/services/api';
 import { Message, Thread } from '@/types/api';
+import { FormattedMessage } from '@/components/FormattedMessage';
+
 
 export default function DashboardPage() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -265,7 +267,11 @@ export default function DashboardPage() {
                       : 'bg-gray-100 text-gray-800'
                   }`}
                 >
-                  {message.content}
+                  {message.role === 'assistant' ? (
+                    <FormattedMessage content={message.content} />
+                  ) : (
+                    message.content
+                  )}
                 </div>
                 {message.role === 'user' && (
                   <div className="flex-shrink-0">
