@@ -268,7 +268,7 @@ export default function DashboardPage() {
                 {(() => {
                   const date = new Date(thread.last_activity);
                   // Subtract 5 hours from UTC to get ET
-                  date.setHours(date.getHours() - 5);
+                  date.setHours(date.getHours() - 4);
                   return date.toLocaleString([], {
                     month: 'numeric',
                     day: 'numeric',
