@@ -36,6 +36,11 @@ export default function DashboardPage() {
       setThreads(fetchedThreads);
       if (fetchedThreads.length > 0 && !activeThread) {
         setActiveThread(fetchedThreads[0].id);
+      } else if (fetchedThreads.length === 0) {
+        // If no threads exist, create one automatically
+        const newThread = await api.createThread();
+        setThreads([newThread]);
+        setActiveThread(newThread.id);
       }
     } catch (error) {
       console.error('Error loading threads:', error);
@@ -49,7 +54,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadThreads();
-  }, [loadThreads]);
+  }, []);
 
   useEffect(() => {
     if (activeThread) {
@@ -343,7 +348,10 @@ export default function DashboardPage() {
             <button
               type="submit"
               disabled={!inputMessage.trim() || isLoading || isUploading}
-              className="w-8 h-8 flex items-center justify-center bg-blue-500 hover:bg-blue-600 rounded-md text-white transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-white transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              style={{ backgroundColor: '#049ad3' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#08bbff'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#049ad3'}
             >
               <ArrowUp className="h-5 w-5" />
             </button>
