@@ -254,9 +254,9 @@ export default function DashboardPage() {
                     <Image
                       src="/images/misai.svg"
                       alt="Assistant"
-                      width={32}
-                      height={32}
-                      className="rounded-full w-8 h-8"
+                      width={42}
+                      height={42}
+                      className="rounded-full w-9 h-9"
                     />
                   </div>
                 )}
@@ -278,9 +278,9 @@ export default function DashboardPage() {
                     <Image
                       src="/images/muser.svg"
                       alt="User"
-                      width={32}
-                      height={32}
-                      className="rounded-full w-8 h-8"
+                      width={24}
+                      height={24}
+                      className="rounded-full w-6 h-6"
                     />
                   </div>
                 )}
