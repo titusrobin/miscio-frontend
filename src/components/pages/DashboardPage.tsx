@@ -154,7 +154,7 @@ export default function DashboardPage() {
       const vectorStoreName = `${activeThread}-knowledge-base`; // Default name based on thread
       
       await api.uploadFile(file, vectorStoreName);
-      setUploadSuccess(`File ${file.name} uploaded successfully!`);
+      setUploadSuccess(`File uploaded complete!`);
 
       setTimeout(() => {
         setUploadSuccess(null);
@@ -254,9 +254,9 @@ export default function DashboardPage() {
                     <Image
                       src="/images/misai.svg"
                       alt="Assistant"
-                      width={52}
-                      height={52}
-                      className="rounded-full w-10 h-10"
+                      width={62}
+                      height={62}
+                      className="rounded-full w-11 h-11"
                     />
                   </div>
                 )}
@@ -279,8 +279,8 @@ export default function DashboardPage() {
                       src="/images/muser.svg"
                       alt="User"
                       width={24}
-                      height={24}
-                      className="rounded-full w-6 h-6"
+                      height={30}
+                      className="rounded-full w-6 h-8"
                     />
                   </div>
                 )}
