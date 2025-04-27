@@ -16,7 +16,6 @@ export default function DashboardPage() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [threads, setThreads] = useState<Thread[]>([]);
   const [activeThread, setActiveThread] = useState<string | null>(null);
-  const [threadCreationTime, setThreadCreationTime] = useState<{[key: string]: number}>({});
   const [titleGenerationTimeout, setTitleGenerationTimeout] = useState<NodeJS.Timeout | null>(null);
 
   
@@ -57,11 +56,6 @@ export default function DashboardPage() {
       setActiveThread(newThread.id);
       setMessages([]);
       
-      // Store the creation time for this thread
-      setThreadCreationTime(prev => ({
-        ...prev,
-        [newThread.id]: Date.now()
-      }));
     } catch (error) {
       console.error('Error creating thread:', error);
       setError('Failed to create new thread');
