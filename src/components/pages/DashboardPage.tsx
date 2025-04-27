@@ -333,7 +333,7 @@ export default function DashboardPage() {
               className={`p-2 ${isUploading ? 'text-blue-400 animate-pulse' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
               disabled={isUploading}
             >
-              <FileUp className="h-5 w-5" />
+              <FileUp className="h-7 w-7" />
             </button>
             
             <input
