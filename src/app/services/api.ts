@@ -185,6 +185,26 @@ class ApiService {
     
     return this.requestWithFormData<FileUploadResponse>('/rag/upload', formData);
   }
+
+  async updateThreadTitle(threadId: string, title: string): Promise<Thread> {
+    return this.request<Thread>(`/chat/threads/${threadId}/title`, {
+      method: 'PUT',
+      body: JSON.stringify({ title })
+    });
+  }
+
+  async generateThreadTitle(messages: Message[]): Promise<string> {
+    // Get up to the first 5 exchanges (10 messages) to generate a title
+    const conversationContext = messages.slice(0, 10).map(m => 
+      `${m.role}: ${m.content.substring(0, 100)}`
+    ).join('\n');
+    
+    const prompt = `Based on this conversation, generate a concise, descriptive title (max 5 words):\n\n${conversationContext}\n\nTitle:`;
+    
+    const response = await this.sendMessage(prompt);
+    // Extract just the title from the response
+    return response.response.trim();
+  }
 }
 
 export const api = new ApiService();

@@ -8,7 +8,6 @@ import { api } from '@/app/services/api';
 import { Message, Thread } from '@/types/api';
 import { FormattedMessage } from '@/components/FormattedMessage';
 
-
 export default function DashboardPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -17,6 +16,9 @@ export default function DashboardPage() {
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [threads, setThreads] = useState<Thread[]>([]);
   const [activeThread, setActiveThread] = useState<string | null>(null);
+  const [threadCreationTime, setThreadCreationTime] = useState<{[key: string]: number}>({});
+  const [titleGenerationTimeout, setTitleGenerationTimeout] = useState<NodeJS.Timeout | null>(null);
+
   
   // Add new state for file upload
   const [isUploading, setIsUploading] = useState(false);
@@ -48,6 +50,24 @@ export default function DashboardPage() {
     }
   }, [activeThread]);
 
+  const createNewThread = async () => {
+    try {
+      const newThread = await api.createThread();
+      setThreads(prev => [newThread, ...prev]);
+      setActiveThread(newThread.id);
+      setMessages([]);
+      
+      // Store the creation time for this thread
+      setThreadCreationTime(prev => ({
+        ...prev,
+        [newThread.id]: Date.now()
+      }));
+    } catch (error) {
+      console.error('Error creating thread:', error);
+      setError('Failed to create new thread');
+    }
+  };
+
   useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
@@ -55,6 +75,49 @@ export default function DashboardPage() {
   useEffect(() => {
     loadThreads();
   }, []);
+
+  useEffect(() => {
+    // Clear any existing timeout when thread changes
+    if (titleGenerationTimeout) {
+      clearTimeout(titleGenerationTimeout);
+    }
+  
+    // Set up new timeout for the active thread
+    if (activeThread) {
+      const currentThread = threads.find(t => t.id === activeThread);
+      
+      // Only set timeout if thread has default name and has messages
+      if (currentThread && currentThread.title === 'New Chat' && messages.length > 0) {
+        const timeout = setTimeout(async () => {
+          try {
+            // Generate title after 5 minutes
+            const newTitle = await api.generateThreadTitle(messages);
+            const truncatedTitle = newTitle.length > 30 ? newTitle.substring(0, 27) + '...' : newTitle;
+            
+            await api.updateThreadTitle(activeThread, truncatedTitle);
+            
+            // Update local state
+            setThreads(prev => prev.map(thread => 
+              thread.id === activeThread 
+                ? { ...thread, title: truncatedTitle }
+                : thread
+            ));
+          } catch (error) {
+            console.error('Error updating thread title:', error);
+          }
+        }, 5 * 60 * 1000); // 5 minutes in milliseconds
+        
+        setTitleGenerationTimeout(timeout);
+      }
+    }
+  
+    // Cleanup function
+    return () => {
+      if (titleGenerationTimeout) {
+        clearTimeout(titleGenerationTimeout);
+      }
+    };
+  }, [activeThread, messages, threads]);
 
   useEffect(() => {
     if (activeThread) {
@@ -80,69 +143,48 @@ export default function DashboardPage() {
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputMessage.trim() || !activeThread || isLoading) return;
-
+  
     const newMessage: Message = {
       role: 'user',
       content: inputMessage,
       timestamp: new Date().toISOString()
     };
-
-    // Add user message to state immediately
+  
     setMessages(prev => [...prev, newMessage]);
     setInputMessage('');
     setIsLoading(true);
     setError(null);
-
+  
     try {
-      // Make API call to send message
       const response = await api.sendThreadMessage(activeThread, inputMessage);
       
-      // Check if response contains messages array (modified API response)
       if (response.messages && Array.isArray(response.messages)) {
         const serverMessages = response.messages as Message[];
-        // If API returns both user and assistant messages, update state with entire array
-        // This replaces the temporary user message with the server version and adds the assistant's response
         setMessages(prev => [
-          ...prev.slice(0, prev.length - 1), // Remove the temporary user message
-          ...serverMessages // Add both messages from the server
+          ...prev.slice(0, prev.length - 1),
+          ...serverMessages
         ]);
       } else if (response.response) {
-        // If API returns just the assistant's response
         const assistantMessage: Message = {
           role: 'assistant',
           content: response.response,
           timestamp: new Date().toISOString()
         };
-
-        // Add assistant message to state
         setMessages(prev => [...prev, assistantMessage]);
       }
       
-      // Refresh threads to update last message
+      // Removed the title generation logic from here
       await loadThreads();
     } catch (error) {
       console.error('Error sending message:', error);
       setError('Failed to send message');
-      // Remove the temporary user message if the request fails
       setMessages(prev => prev.slice(0, -1));
     } finally {
       setIsLoading(false);
-      // Ensure scroll to bottom after state updates
       setTimeout(scrollToBottom, 100);
     }
   };
-
-  const createNewThread = async () => {
-    try {
-      const newThread = await api.createThread();
-      setThreads(prev => [newThread, ...prev]);
-      setActiveThread(newThread.id);
-      setMessages([]);
-    } catch (error) {
-      console.error('Error creating thread:', error);
-      setError('Failed to create new thread');
-    }
-  };
+  
 
   // Add a function to handle file selection
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
