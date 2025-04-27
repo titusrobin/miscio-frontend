@@ -265,13 +265,17 @@ export default function DashboardPage() {
                 {thread.last_message}
               </div>
               <div className="text-xs text-gray-400 mt-1">
-                {new Date(thread.last_activity).toLocaleString('en-US', {
-                  timeZone: 'America/New_York',
-                  month: 'numeric',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
+                {(() => {
+                  const date = new Date(thread.last_activity);
+                  // Subtract 5 hours from UTC to get ET
+                  date.setHours(date.getHours() - 5);
+                  return date.toLocaleString([], {
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  });
+                })()}
               </div>
             </button>
           ))}
