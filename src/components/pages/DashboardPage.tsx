@@ -229,7 +229,12 @@ export default function DashboardPage() {
                 {thread.last_message}
               </div>
               <div className="text-xs text-gray-400 mt-1">
-                {new Date(thread.last_activity).toLocaleString()}
+                {new Date(thread.last_activity).toLocaleString([], {
+                  month: 'numeric',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
               </div>
             </button>
           ))}
@@ -337,7 +342,7 @@ export default function DashboardPage() {
               className={`p-2 ${isUploading ? 'text-blue-400 animate-pulse' : 'text-gray-400 hover:text-gray-600'} transition-colors`}
               disabled={isUploading}
             >
-              <FileUp className="h-7 w-7" />
+              <FileUp className="h-6 w-6" />
             </button>
             
             <input
