@@ -191,7 +191,7 @@ export default function DashboardPage() {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
             <Image
-              src="/images/misciologo2.png"
+              src="/images/mai.svg"
               alt="Logo"
               width={102}
               height={72}
@@ -252,7 +252,7 @@ export default function DashboardPage() {
                 {message.role === 'assistant' && (
                   <div className="flex-shrink-0">
                     <Image
-                      src="/images/miscio_agent.jpg"
+                      src="/images/mai.svg"
                       alt="Assistant"
                       width={32}
                       height={32}
@@ -276,7 +276,7 @@ export default function DashboardPage() {
                 {message.role === 'user' && (
                   <div className="flex-shrink-0">
                     <Image
-                      src="/images/user-128.png"
+                      src="/images/user.svg"
                       alt="User"
                       width={32}
                       height={32}

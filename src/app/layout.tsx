@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "Miscio AI",
   description: "Unlock Student-centricity with AI assistants",
   icons: {
-    icon: '/images/miscioai.svg',
+    icon: '/images/mai.svg',
   },
 };
 
