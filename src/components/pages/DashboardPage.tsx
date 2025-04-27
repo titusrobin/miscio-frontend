@@ -308,10 +308,14 @@ export default function DashboardPage() {
           
           <div ref={messagesEndRef} />
           {isLoading && (
-            <div className="flex justify-start items-center space-x-2">
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]" />
-              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]" />
+            <div className="flex justify-start items-center">
+              <Image
+                src="/images/loadmiscio.gif"  
+                alt="Loading..."
+                width={40}
+                height={40}
+                className="object-contain"
+              />
             </div>
           )}
         </div>
