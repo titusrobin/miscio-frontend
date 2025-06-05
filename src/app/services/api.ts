@@ -135,10 +135,28 @@ class ApiService {
 
   // Updated to use the explicit ThreadMessageResponse type
   async sendThreadMessage(threadId: string, content: string): Promise<ThreadMessageResponse> {
-    return this.request<ThreadMessageResponse>(`/chat/threads/${threadId}/messages`, {
-      method: 'POST',
-      body: JSON.stringify({ content })
-    });
+    // Try the request up to 3 times
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        return await this.request<ThreadMessageResponse>(`/chat/threads/${threadId}/messages`, {
+          method: 'POST',
+          body: JSON.stringify({ content })
+        });
+      } catch (error) {
+        console.log(`Attempt ${attempt} failed:`, error);
+        
+        // If it's the last attempt, throw the error
+        if (attempt === 3) {
+          throw error;
+        }
+        
+        // Wait 2 seconds before retrying
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
+    }
+    
+    // This should never be reached, but TypeScript requires it
+    throw new Error('All retry attempts failed');
   }
   
   private async requestWithFormData<T>(endpoint: string, formData: FormData, timeoutMs: number = 300000): Promise<T> {
