@@ -25,16 +25,23 @@ class ApiService {
     return headers;
   }
 
-  private async request<T>(endpoint: string, options: RequestInit): Promise<T> {
+  private async request<T>(endpoint: string, options: RequestInit, timeoutMs: number = 300000): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     console.log(`[${env.ENVIRONMENT}] Requesting: ${url}`);
     const headers = this.getHeaders((options.headers as Record<string, string>)?.['Content-Type']);
+    // Simple timeout wrapper
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
+    );
     
     try {
-      const response = await fetch(url, {
-        ...options,
-        headers,
-      });
+      const response = await Promise.race([
+        fetch(url, {
+          ...options,
+          headers,
+        }),
+        timeoutPromise
+      ]) as Response;
       
       if (!response.ok) {
         if (response.status === 401) {
@@ -134,7 +141,7 @@ class ApiService {
     });
   }
   
-  private async requestWithFormData<T>(endpoint: string, formData: FormData): Promise<T> {
+  private async requestWithFormData<T>(endpoint: string, formData: FormData, timeoutMs: number = 300000): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
     console.log(`[${env.ENVIRONMENT}] Requesting: ${url} with FormData`);
     
@@ -148,14 +155,22 @@ class ApiService {
     const headers: HeadersInit = {};
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
+      
     }
+
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
+    );
     
     try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers,
-        body: formData,
-      });
+      const response = await Promise.race([
+        fetch(url, {
+          method: 'POST',
+          headers,
+          body: formData,
+        }),
+        timeoutPromise
+      ]) as Response;
       
       if (!response.ok) {
         if (response.status === 401) {
