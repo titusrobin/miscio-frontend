@@ -133,19 +133,51 @@ class ApiService {
     });
   }
 
-  // Updated to use the explicit ThreadMessageResponse type
+  // NEW METHOD: Generate loading messages for a prompt
+  async generateLoadingMessages(content: string): Promise<string[]> {
+    try {
+      const response = await this.request<{loading_messages: string[]}>('/chat/loading-messages', {
+        method: 'POST',
+        body: JSON.stringify({ content }),
+      });
+      return response.loading_messages || [];
+    } catch (error) {
+      console.error('Error generating loading messages:', error);
+      // Return fallback messages if API fails
+      return [
+        "Processing your request...",
+        "Analyzing the requirements...",
+        "Setting up the necessary parameters...",
+        "Preparing the response...",
+        "Gathering relevant information...",
+        "Finalizing the details...",
+        "Almost ready...",
+        "Completing final steps...",
+        "Just a moment more..."
+      ];
+    }
+  }
+
+  // UPDATED METHOD: Enhanced sendThreadMessage with loading support
   async sendThreadMessage(threadId: string, content: string): Promise<ThreadMessageResponse> {
+    // Detect if this might be a campaign request for longer timeout
+    const isCampaignRequest = content.toLowerCase().includes('campaign') || 
+                             content.toLowerCase().includes('send message') ||
+                             content.toLowerCase().includes('reach out');
+    
+    // Use longer timeout for campaign requests
+    const timeoutMs = isCampaignRequest ? 600000 : 300000; // 10 minutes for campaigns, 5 minutes for regular
+    
     // Try the request up to 3 times
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         return await this.request<ThreadMessageResponse>(`/chat/threads/${threadId}/messages`, {
           method: 'POST',
           body: JSON.stringify({ content })
-        });
+        }, timeoutMs);
       } catch (error) {
         console.log(`Attempt ${attempt} failed:`, error);
         
-        // If it's the last attempt, throw the error
         if (attempt === 3) {
           throw error;
         }
@@ -155,7 +187,6 @@ class ApiService {
       }
     }
     
-    // This should never be reached, but TypeScript requires it
     throw new Error('All retry attempts failed');
   }
   

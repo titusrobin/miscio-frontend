@@ -7,6 +7,8 @@ import Image from 'next/image';
 import { api } from '@/app/services/api';
 import { Message, Thread } from '@/types/api';
 import { FormattedMessage } from '@/components/FormattedMessage';
+import { DynamicLoadingIndicator } from '@/components/DynamicLoadingIndicator';
+
 
 export default function DashboardPage() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -17,6 +19,8 @@ export default function DashboardPage() {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [activeThread, setActiveThread] = useState<string | null>(null);
   const [titleGenerationTimeout, setTitleGenerationTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [loadingMessages, setLoadingMessages] = useState<string[]>([]);
+  const [showDynamicLoading, setShowDynamicLoading] = useState(false);
 
   
   // Add new state for file upload
@@ -145,12 +149,22 @@ export default function DashboardPage() {
     };
   
     setMessages(prev => [...prev, newMessage]);
+    const currentInput = inputMessage; // Store the input
     setInputMessage('');
     setIsLoading(true);
     setError(null);
   
     try {
-      const response = await api.sendThreadMessage(activeThread, inputMessage);
+      // STEP 1: Generate loading messages immediately
+      console.log('Generating loading messages for:', currentInput);
+      const generatedMessages = await api.generateLoadingMessages(currentInput);
+      console.log('Generated messages:', generatedMessages);
+      
+      setLoadingMessages(generatedMessages);
+      setShowDynamicLoading(true);
+  
+      // STEP 2: Send the actual message (this will take time)
+      const response = await api.sendThreadMessage(activeThread, currentInput);
       
       if (response.messages && Array.isArray(response.messages)) {
         const serverMessages = response.messages as Message[];
@@ -167,17 +181,19 @@ export default function DashboardPage() {
         setMessages(prev => [...prev, assistantMessage]);
       }
       
-      // Removed the title generation logic from here
       await loadThreads();
     } catch (error) {
       console.error('Error sending message:', error);
       setError('Failed to send message');
       setMessages(prev => prev.slice(0, -1));
     } finally {
+      // STEP 3: Hide loading when complete
       setIsLoading(false);
+      setShowDynamicLoading(false);
       setTimeout(scrollToBottom, 100);
     }
   };
+  
   
 
   // Add a function to handle file selection
@@ -353,7 +369,16 @@ export default function DashboardPage() {
           )}
           
           <div ref={messagesEndRef} />
-          {isLoading && (
+          <DynamicLoadingIndicator 
+            messages={loadingMessages}
+            isVisible={showDynamicLoading && isLoading}
+            onComplete={() => {
+              console.log('Loading animation completed');
+            }}
+          />
+
+          {/* Keep your existing loading for non-message operations (like file uploads) */}
+          {isLoading && !showDynamicLoading && (
             <div className="flex justify-start items-center">
               <Image
                 src="/images/loadmiscio.gif"  
@@ -364,7 +389,9 @@ export default function DashboardPage() {
               />
             </div>
           )}
-        </div>
+
+          <div ref={messagesEndRef} />
+                  </div> 
 
         <div className="border-t border-gray-200 p-4">
           <form onSubmit={handleSendMessage} className="flex items-center space-x-4">
