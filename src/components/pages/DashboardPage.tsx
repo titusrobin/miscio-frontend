@@ -229,7 +229,7 @@ export default function DashboardPage() {
       // Add a system message about the successful upload
       const systemMessage: Message = {
         role: 'assistant',
-        content: `File "${file.name}" ready!✅`,
+        content: `"${file.name}" added to my knowledge base`,
         timestamp: new Date().toISOString()
       };
       
@@ -374,7 +374,7 @@ export default function DashboardPage() {
                 className="object-contain"
               />
               <span className="ml-2 text-gray-600 animate-pulse transition-opacity duration-1000">
-              Uploading file to your assistant knowledge base!
+                Uploading file to your assistant knowledge base!
               </span>
             </div>
           )}
