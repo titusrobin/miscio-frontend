@@ -13,14 +13,12 @@ export const DynamicLoadingIndicator: React.FC<DynamicLoadingIndicatorProps> = (
   isVisible,
   onComplete
 }) => {
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [displayedMessage, setDisplayedMessage] = useState('');
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Reset when visibility changes
   useEffect(() => {
     if (isVisible) {
-      setCurrentMessageIndex(0);
       setDisplayedMessage(messages[0] || 'Processing...');
     } else {
       // Clean up when hidden
@@ -43,13 +41,12 @@ export const DynamicLoadingIndicator: React.FC<DynamicLoadingIndicatorProps> = (
       clearInterval(intervalRef.current);
     }
 
+    let currentIndex = 0;
+
     // Set up message rotation
     intervalRef.current = setInterval(() => {
-      setCurrentMessageIndex(prevIndex => {
-        const nextIndex = (prevIndex + 1) % messages.length;
-        setDisplayedMessage(messages[nextIndex]);
-        return nextIndex;
-      });
+      currentIndex = (currentIndex + 1) % messages.length;
+      setDisplayedMessage(messages[currentIndex]);
     }, 3500); // Change message every 3.5 seconds
 
     // Cleanup function
