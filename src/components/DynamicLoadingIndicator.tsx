@@ -80,15 +80,8 @@ export const DynamicLoadingIndicator: React.FC<DynamicLoadingIndicatorProps> = (
       
       {/* Dynamic status messages */}
       <div className="flex-1">
-        <div className="text-sm text-gray-600 min-h-[20px] transition-opacity duration-300">
+        <div className="text-sm text-gray-400 min-h-[20px] transition-opacity duration-300">
           {displayedMessage}
-        </div>
-        
-        {/* Optional progress indicator */}
-        <div className="text-xs text-gray-400 mt-1">
-          {messages.length > 0 && (
-            <span>{currentMessageIndex + 1} of {messages.length} operations</span>
-          )}
         </div>
       </div>
     </div>
