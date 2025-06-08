@@ -374,7 +374,7 @@ export default function DashboardPage() {
                 className="object-contain"
               />
               <span className="ml-2 text-gray-600 animate-pulse transition-opacity duration-1000">
-                Uploading file to your assistant knowledge base!
+                Getting your file up on my knowledge base...
               </span>
             </div>
           )}
