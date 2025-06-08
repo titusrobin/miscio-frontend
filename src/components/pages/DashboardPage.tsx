@@ -229,7 +229,7 @@ export default function DashboardPage() {
       // Add a system message about the successful upload
       const systemMessage: Message = {
         role: 'assistant',
-        content: `"${file.name}" added to my knowledge base`,
+        content: `All caught up on your "${file.name}" file now! ✅`,
         timestamp: new Date().toISOString()
       };
       
