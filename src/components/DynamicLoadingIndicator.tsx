@@ -70,7 +70,7 @@ export const DynamicLoadingIndicator: React.FC<DynamicLoadingIndicatorProps> = (
       {/* Your existing loading animation */}
       <div className="flex-shrink-0">
         <Image
-          src="/images/loadmiscio.gif"  
+          src="/images/miscioload2.gif"  
           alt="Loading..."
           width={40}
           height={40}

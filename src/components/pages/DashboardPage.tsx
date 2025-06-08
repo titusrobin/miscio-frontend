@@ -381,7 +381,7 @@ export default function DashboardPage() {
           {isLoading && !showDynamicLoading && (
             <div className="flex justify-start items-center">
               <Image
-                src="/images/loadmiscio.gif"  
+                src="/images/miscioload2.gif"  
                 alt="Loading..."
                 width={40}
                 height={40}
