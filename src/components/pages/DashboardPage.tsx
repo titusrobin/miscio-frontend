@@ -22,6 +22,11 @@ export default function DashboardPage() {
   const [loadingMessages, setLoadingMessages] = useState<string[]>([]);
   const [showDynamicLoading, setShowDynamicLoading] = useState(false);
 
+  const uploadSuccessMessages = [
+    "Upload complete!",
+    "File processed!",
+    "Successfully uploaded!"
+  ];
   
   // Add new state for file upload
   const [isUploading, setIsUploading] = useState(false);
@@ -211,16 +216,20 @@ export default function DashboardPage() {
       const vectorStoreName = `${activeThread}-knowledge-base`; // Default name based on thread
       
       await api.uploadFile(file, vectorStoreName);
-      setUploadSuccess(`File uploaded complete!`);
 
+      // Random success message (max 3 words)
+      const randomMessage = uploadSuccessMessages[Math.floor(Math.random() * uploadSuccessMessages.length)];
+      setUploadSuccess(randomMessage);
+
+      // Clear message after 2 seconds
       setTimeout(() => {
         setUploadSuccess(null);
-      }, 2500); // 5000ms = 5 seconds
+      }, 2000);
       
       // Add a system message about the successful upload
       const systemMessage: Message = {
         role: 'assistant',
-        content: `File ${file.name} has been uploaded successfully. You can now ask questions about its content.`,
+        content: `File "${file.name}" ready!✅`,
         timestamp: new Date().toISOString()
       };
       
@@ -356,9 +365,17 @@ export default function DashboardPage() {
           )}
           
           {isUploading && (
-            <div className="flex justify-center items-center my-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-              <span className="ml-2">Uploading file...</span>
+            <div className="flex justify-start items-center">
+              <Image
+                src="/images/loadmiscio.gif"  
+                alt="Loading..."
+                width={40}
+                height={40}
+                className="object-contain"
+              />
+              <span className="ml-2 text-gray-600 animate-pulse transition-opacity duration-1000">
+                Uploading file to your assistant's knowledge!
+              </span>
             </div>
           )}
           
