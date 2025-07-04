@@ -11,6 +11,7 @@ import { DynamicLoadingIndicator } from '@/components/DynamicLoadingIndicator';
 
 
 export default function DashboardPage() {
+  const USE_SIMPLE_LOADING = true;
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +22,7 @@ export default function DashboardPage() {
   const [titleGenerationTimeout, setTitleGenerationTimeout] = useState<NodeJS.Timeout | null>(null);
   const [loadingMessages, setLoadingMessages] = useState<string[]>([]);
   const [showDynamicLoading, setShowDynamicLoading] = useState(false);
+
 
   const uploadSuccessMessages = [
     "Upload complete!",
@@ -160,13 +162,16 @@ export default function DashboardPage() {
     setError(null);
   
     try {
-      // STEP 1: Generate loading messages immediately
-      console.log('Generating loading messages for:', currentInput);
-      const generatedMessages = await api.generateLoadingMessages(currentInput);
-      console.log('Generated messages:', generatedMessages);
-      
-      setLoadingMessages(generatedMessages);
-      setShowDynamicLoading(true);
+      // CONDITIONAL LOADING MESSAGES
+      if (!USE_SIMPLE_LOADING) {
+        // STEP 1: Generate loading messages immediately (COMPLEX LOADING)
+        console.log('Generating loading messages for:', currentInput);
+        const generatedMessages = await api.generateLoadingMessages(currentInput);
+        console.log('Generated messages:', generatedMessages);
+        
+        setLoadingMessages(generatedMessages);
+        setShowDynamicLoading(true);
+      }
   
       // STEP 2: Send the actual message (this will take time)
       const response = await api.sendThreadMessage(activeThread, currentInput);
@@ -194,7 +199,9 @@ export default function DashboardPage() {
     } finally {
       // STEP 3: Hide loading when complete
       setIsLoading(false);
-      setShowDynamicLoading(false);
+      if (!USE_SIMPLE_LOADING) {
+        setShowDynamicLoading(false);
+      }
       setTimeout(scrollToBottom, 100);
     }
   };
@@ -386,25 +393,34 @@ export default function DashboardPage() {
           )}
           
           <div ref={messagesEndRef} />
-          <DynamicLoadingIndicator 
-            messages={loadingMessages}
-            isVisible={showDynamicLoading && isLoading}
-            onComplete={() => {
-              console.log('Loading animation completed');
-            }}
-          />
-
-          {/* Keep your existing loading for non-message operations (like file uploads) */}
-          {isLoading && !showDynamicLoading && (
-            <div className="flex justify-start items-center">
-              <Image
-                src="/images/loadmiscio.gif"  
-                alt="Loading..."
-                width={40}
-                height={40}
-                className="object-contain"
-              />
-            </div>
+          
+          {USE_SIMPLE_LOADING ? (
+            // SIMPLE LOADING WITH GIF + HARDCODED TEXT
+            isLoading && (
+              <div className="flex justify-start items-center my-4 space-x-4">
+                <div className="flex-shrink-0">
+                  <Image
+                    src="/images/loadmiscio.gif"  
+                    alt="Loading..."
+                    width={40}
+                    height={40}
+                    className="object-contain"
+                  />
+                </div>
+                <div className="text-sm text-gray-400 animate-pulse">
+                  Thinking...
+                </div>
+              </div>
+            )
+          ) : (
+            // COMPLEX DYNAMIC LOADING (YOUR AWESOME SYSTEM)
+            <DynamicLoadingIndicator 
+              messages={loadingMessages}
+              isVisible={showDynamicLoading && isLoading}
+              onComplete={() => {
+                console.log('Loading animation completed');
+              }}
+            />
           )}
 
           <div ref={messagesEndRef} />
