@@ -24,6 +24,22 @@ export default function DashboardPage() {
   const [showDynamicLoading, setShowDynamicLoading] = useState(false);
 
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(e as any);
+    }
+  };
+  
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInputMessage(e.target.value);
+    
+    // Auto-resize the textarea
+    const textarea = e.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; // Max height of 120px
+  };
+
   const uploadSuccessMessages = [
     "Upload complete!",
     "File processed!",
@@ -426,15 +442,15 @@ export default function DashboardPage() {
           <div ref={messagesEndRef} />
                   </div> 
 
-        <div className="border-t border-gray-200 p-4">
-          <form onSubmit={handleSendMessage} className="flex items-center space-x-4">
-            {/* Add the hidden file input */}
+                  <div className="border-t border-gray-200 p-4">
+          <form onSubmit={handleSendMessage} className="flex items-end space-x-4">
+            {/* File upload (keep as is) */}
             <input
               type="file"
               ref={fileInputRef}
               onChange={handleFileSelect}
               className="hidden"
-              accept=".txt,.pdf,.doc,.docx,.csv,.xlsx" // Specify accepted file types
+              accept=".txt,.pdf,.doc,.docx,.csv,.xlsx"
             />
             
             <button
@@ -446,19 +462,36 @@ export default function DashboardPage() {
               <FileUp className="h-6 w-6" />
             </button>
             
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={isLoading || isUploading}
-            />
-            
+            {/* ENHANCED: Multi-line textarea input */}
+            <div className="flex-1 relative">
+              <textarea
+                value={inputMessage}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Type your message... (Shift+Enter for new line, Enter to send)"
+                className="w-full min-h-[48px] max-h-[120px] px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-y-auto"
+                disabled={isLoading || isUploading}
+                rows={1}
+                style={{
+                  lineHeight: '1.5',
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#CBD5E1 #F1F5F9'
+                }}
+              />
+              
+              {/* Character count (optional) */}
+              {inputMessage.length > 100 && (
+                <div className="absolute bottom-1 right-12 text-xs text-gray-400">
+                  {inputMessage.length}/1000
+                </div>
+              )}
+            </div>
+
+            {/* Send button (updated alignment) */}
             <button
               type="submit"
               disabled={!inputMessage.trim() || isLoading || isUploading}
-              className="w-8 h-8 flex items-center justify-center rounded-md text-white transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+              className="p-3 flex-shrink-0 rounded-md text-white transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               style={{ backgroundColor: '#049ad3' }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#08bbff'}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#049ad3'}
@@ -466,6 +499,11 @@ export default function DashboardPage() {
               <ArrowUp className="h-5 w-5" />
             </button>
           </form>
+          
+          {/* Help text */}
+          <div className="mt-2 text-xs text-gray-500 text-center">
+            <span className="font-medium">Enter</span> to send • <span className="font-medium">Shift + Enter</span> for new line
+          </div>
         </div>
       </div>
     </div>
