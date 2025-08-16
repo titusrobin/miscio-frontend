@@ -467,8 +467,8 @@ export default function DashboardPage() {
             <div className="flex-1 relative">
               {/* Custom styled placeholder overlay */}
               {!inputMessage && (
-                <div className="absolute left-4 top-3 pointer-events-none text-gray-500 z-10">
-                  How can I <em className="font-semibold text-gray-700">Miscio AI</em> help you today?
+                  <div className="absolute left-4 top-3 pointer-events-none text-gray-500 italic z-10">
+                  How can I Miscio AI help you today?
                 </div>
               )}
               
