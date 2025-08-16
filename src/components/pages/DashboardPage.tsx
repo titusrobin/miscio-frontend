@@ -465,11 +465,18 @@ export default function DashboardPage() {
             
             {/* ENHANCED: Multi-line textarea input */}
             <div className="flex-1 relative">
+              {/* Custom styled placeholder overlay */}
+              {!inputMessage && (
+                <div className="absolute left-4 top-3 pointer-events-none text-gray-500 z-10">
+                  How can I <em className="font-semibold text-gray-700">Miscio AI</em> help you today?
+                </div>
+              )}
+              
               <textarea
                 value={inputMessage}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
-                placeholder="Type your message... (Shift+Enter for new line, Enter to send)"
+                placeholder="" // Empty placeholder since we're using custom overlay
                 className="w-full min-h-[48px] max-h-[120px] px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none overflow-y-auto"
                 disabled={isLoading || isUploading}
                 rows={1}
@@ -480,7 +487,7 @@ export default function DashboardPage() {
                 }}
               />
               
-              {/* Character count (optional) */}
+              {/* Character count (keep as before) */}
               {inputMessage.length > 100 && (
                 <div className="absolute bottom-1 right-12 text-xs text-gray-400">
                   {inputMessage.length}/1000

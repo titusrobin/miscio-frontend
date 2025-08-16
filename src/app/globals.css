@@ -128,3 +128,44 @@ textarea::-webkit-scrollbar-thumb:hover {
 textarea {
   transition: height 0.2s ease-out;
 }
+
+/* ADD THIS: Header styles for formatted messages */
+.formatted-message h1 {
+  font-size: 1.875rem !important; /* 30px */
+  font-weight: 700 !important;
+  color: #1f2937 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.2 !important;
+  display: block !important;
+}
+
+.formatted-message h2 {
+  font-size: 1.5rem !important; /* 24px */
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.3 !important;
+  display: block !important;
+}
+
+.formatted-message h3 {
+  font-size: 1.25rem !important; /* 20px */
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.4 !important;
+  display: block !important;
+}
+
+.formatted-message h4 {
+  font-size: 1.125rem !important; /* 18px */
+  font-weight: 600 !important;
+  color: #1f2937 !important;
+  margin-top: 1rem !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.4 !important;
+  display: block !important;
+}
