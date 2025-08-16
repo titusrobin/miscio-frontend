@@ -27,7 +27,8 @@ export default function DashboardPage() {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage(e as any);
+      const formEvent = e as unknown as React.FormEvent;
+      handleSendMessage(formEvent);
     }
   };
   
