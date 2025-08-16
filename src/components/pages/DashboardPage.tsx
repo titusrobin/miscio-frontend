@@ -468,7 +468,7 @@ export default function DashboardPage() {
               {/* Custom styled placeholder overlay */}
               {!inputMessage && (
                   <div className="absolute left-4 top-3 pointer-events-none text-gray-500 italic z-10">
-                  How can I Miscio AI help you today?
+                  How can I help you today?
                 </div>
               )}
               
